@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tienda de juguetes AR</title>
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
+
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+    <script src="https://raw.githack.com/fcor/arjs-gestures/master/dist/gestures.js"></script>
+
+    <!-- Bootstrap -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+
+    <link
+      href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css"
+      rel="stylesheet"
+      id="bootstrap-css"
+    />
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+    <!-- sweetalert -->
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <!-- El núcleo del SDK de Firebase JS siempre es necesario y se enlista primero -->
+    <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-firestore.js"></script>
+    <script>
+      var firebaseConfig = {
+        apiKey: "AIzaSyDcMs4RRTSgw2x5qRilNDjMCz0lsDL-SEY",
+        authDomain: "ar-toy-store.firebaseapp.com",
+        projectId: "ar-toy-store",
+        storageBucket: "ar-toy-store.appspot.com",
+        messagingSenderId: "730692904949",
+        appId: "1:730692904949:web:0f72a095af54503028a2bc",
+        measurementId: "G-WB8D6DY4VW"
+      };
+      // Inicializar Firebase
+      firebase.initializeApp(firebaseConfig);
+    </script>
+
+    <!-- Hoja de estilos local -->
+    <link href="./style.css" rel="stylesheet" />
+
+    <!-- Archivos JS -->
+    <script src="./js/addButtons.js"></script>
+    <script src="./js/addMarkers.js"></script>
+    <script src="./js/markerhandler.js"></script>
+    <script src="./js/stars.js"></script>
+  </head>
+
+  <body style="margin : 0px; overflow: hidden;">
+    <a-scene
+      id="main-scene"
+      vr-mode-ui="enabled: false"
+      embedded
+      arjs="sourceType: webcam;
+      sourceWidth:1280; sourceHeight:960;
+      displayWidth: 1280; displayHeight: 960;
+      debugUIEnabled: false;"
+      gesture-detector
+      createbuttons
+      createmarkers
+    >
+      <!-- Cámara -->
+      <a-entity camera></a-entity>
+    </a-scene>
+    <!-- División del botón principal -->
+    <div id="button-div"></div>
+
+    <!-- Plantilla del resumen del pedido -->
+    <div class="container">
+      <div id="modal-div" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Resumen del pedido</h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+                onclick="closeModal()"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="table-responsive">
+                <table class="table table-condensed">
+                  <thead>
+                    <tr>
+                      <td><strong>Elemento</strong></td>
+                      <td class="text-center"><strong>Precio</strong></td>
+                      <td class="text-center"><strong>Cantidad</strong></td>
+                      <td class="text-right"><strong>Total</strong></td>
+                    </tr>
+                  </thead>
+                  <tbody id="bill-table-body">
+                    <!-- foreach ($order->lineItems as $line)  -->
+
+                    <!-- Tu resumen de pedido vendrá aquí --> 
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button id="pay-button" type="button" class="btn btn-primary">
+                Pagar ahora
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Plantilla para calificar al modelo -->
+
+    <div class="container">
+      <div
+        id="rating-modal-div"
+        class="rating-modal"
+        tabindex="-1"
+        role="dialog"
+      >
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Calificar juguete</h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+                onclick="closeRatingModal()"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="table-responsive">
+                <input
+                  id="rating-input"
+                  name="rating-input"
+                  class="rating rating-loading"
+                  data-min="0"
+                  data-max="5"
+                  data-step="0.1"
+                  value="0"
+                />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                id="save-rating-button"
+                type="button"
+                class="btn btn-primary"
+              >
+                Enviar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function closeModal() {
+        document.getElementById("modal-div").style.display = "none";
+      }
+    </script>
+
+    <script>
+      function closeRatingModal() {
+        document.getElementById("rating-modal-div").style.display = "none";
+      }
+    </script>
+  </body>
+</html>

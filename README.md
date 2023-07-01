@@ -1,2 +1,2 @@
-# 170-171-172-173
-BUICXZSAD
+# PRO_C173_SP
+Solución para el proyecto después de la clase C173
